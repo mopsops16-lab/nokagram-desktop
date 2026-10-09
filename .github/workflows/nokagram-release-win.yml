@@ -26,6 +26,13 @@ jobs:
       UPLOAD_ARTIFACT: "true"
       ONLY_CACHE: "false"
       PREPARE_PATH: "Telegram/build/prepare/prepare.py"
+      # Pre-seed git auth for checkout itself: the custom clone path breaks
+      # checkout's includeIf credential helper on Windows, so every git
+      # invocation (fetch + recursive submodules) rewrites github URLs to
+      # carry the token. The secret value is masked in logs automatically.
+      GIT_CONFIG_COUNT: 1
+      GIT_CONFIG_KEY_0: url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf
+      GIT_CONFIG_VALUE_0: "https://github.com/"
 
     defaults:
       run:
