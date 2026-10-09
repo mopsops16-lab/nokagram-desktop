@@ -122,6 +122,22 @@ jobs:
         run: |
           %TBUILD%\%REPO_NAME%\Telegram\build\prepare\win.bat skip-release silent
 
+      - name: Diagnose prepare failure.
+        if: failure()
+        shell: cmd
+        run: |
+          echo === dav1d.pc present? ===
+          dir %TBUILD%\Libraries\win64\local\lib\pkgconfig\dav1d.pc
+          echo === cmd-side native probe ===
+          set PKG_CONFIG_PATH=%TBUILD%\Libraries\win64\local\lib\pkgconfig
+          %TBUILD%\ThirdParty\msys64\ucrt64\bin\pkg-config.exe --modversion dav1d
+          echo CMD_EXIT=%ERRORLEVEL%
+          echo === bash-side probe ===
+          %TBUILD%\ThirdParty\msys64\usr\bin\bash.exe -c "echo BASH_SEES=[$PKG_CONFIG_PATH]; which -a pkg-config; pkg-config --modversion dav1d; echo BASH_EXIT=$?"
+          echo === ffmpeg config.log tail ===
+          powershell -Command "Get-Content %TBUILD%\Libraries\win64\ffmpeg\ffbuild\config.log -Tail 60"
+          exit /b 1
+
       - name: Free up some disk space.
         shell: bash
         run: find $LibrariesPath '(' '(' ! '(' -name '*.lib' -o -name '*.a' -o -name '*.exe' -o -name '*.h' -o -name '*.hpp' -o -name '*.inc' -o -name '*.cmake' -o -name '*.pc' -o -path '*/include/*' -o -path '*/objects-*' -o -path '*/cache_keys/*' -o -path '*/patches/*' -o -path '*/nv-codec-headers/*' ')' -type f ')' -o -empty ')' -delete
