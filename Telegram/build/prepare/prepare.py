@@ -1193,6 +1193,10 @@ depends:patches/ffmpeg.patch
 winarm:
     SET "ARCH_PARAM=--arch=aarch64"
 win:
+    REM Explicit Windows-style pkg-config path: the script prepends a POSIX
+    REM path derived from $PWD which native pkg-config.exe cannot resolve,
+    REM so installed .pc files under local/ stay invisible without this.
+    SET PKG_CONFIG_PATH=%LIBS_DIR%\local\lib\pkgconfig
 depends:patches/build_ffmpeg_win.sh
     bash ../patches/build_ffmpeg_win.sh
 mac:
