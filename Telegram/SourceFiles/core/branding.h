@@ -1,0 +1,50 @@
+/*
+This file is part of Telegram Desktop,
+the official desktop application for the Telegram messaging service.
+
+For license and copyright information please follow this link:
+https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+*/
+#pragma once
+
+#include "base/const_string.h"
+
+namespace Branding {
+
+constexpr auto AppName = "NokaGram Desktop"_cs;
+constexpr auto ShortAppName = "NokaGram"_cs;
+constexpr auto ApplicationName = "NokaGramDesktop"_cs;
+constexpr auto CompanyName = "NokaGram"_cs;
+
+#ifdef _DEBUG
+constexpr auto WindowsIconPath = "Resources/NokaGram/art/icon256_debug.ico"_cs;
+#else
+constexpr auto WindowsIconPath = "Resources/NokaGram/art/icon256.ico"_cs;
+#endif
+constexpr auto MacOSIconName = "Icon.icns"_cs;
+constexpr auto LinuxIconBase = "Resources/NokaGram/art/icon"_cs;
+
+#ifdef _DEBUG
+constexpr auto LogoPath = ":/gui/art/logo_256_debug.png"_cs;
+constexpr auto LogoNoMarginPath = ":/gui/art/logo_256_debug.png"_cs;
+#else
+constexpr auto LogoPath = ":/gui/art/logo_256.png"_cs;
+constexpr auto LogoNoMarginPath = ":/gui/art/logo_256_no_margin.png"_cs;
+#endif
+constexpr auto PlaneWhitePath = ":/gui/plane_white.svg"_cs;
+constexpr auto BusinessLogoPath = ":/gui/art/business_logo.png"_cs;
+constexpr auto AffiliateLogoPath = ":/gui/art/affiliate_logo.png"_cs;
+
+constexpr auto TrayMonochromePath = ":/gui/icons/tray/monochrome.svg"_cs;
+constexpr auto TrayMonochromeAttentionPath = ":/gui/icons/tray/monochrome_attention.svg"_cs;
+constexpr auto TrayMonochromeMutePath = ":/gui/icons/tray/monochrome_mute.svg"_cs;
+
+constexpr auto BundleIdentifier = "org.nokagram.desktop"_cs;
+
+#ifdef _DEBUG
+constexpr auto LinuxAppId = "org.nokagram.desktop.Debug"_cs;
+#else
+constexpr auto LinuxAppId = "org.nokagram.desktop"_cs;
+#endif
+
+} // namespace Branding
