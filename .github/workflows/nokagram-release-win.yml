@@ -12,6 +12,10 @@ on:
       - 'LICENSE'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
 
   windows-release:
@@ -42,6 +46,8 @@ jobs:
       - name: Clone.
         uses: actions/checkout@v7
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
           submodules: recursive
           path: ${{ env.TBUILD }}\${{ env.REPO_NAME }}
 
