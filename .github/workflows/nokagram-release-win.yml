@@ -31,8 +31,8 @@ jobs:
       # invocation (fetch + recursive submodules) rewrites github URLs to
       # carry the token. The secret value is masked in logs automatically.
       GIT_CONFIG_COUNT: 1
-      GIT_CONFIG_KEY_0: url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf
-      GIT_CONFIG_VALUE_0: "https://github.com/"
+      GIT_CONFIG_KEY_0: 'url.https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/.insteadOf'
+      GIT_CONFIG_VALUE_0: 'https://github.com/'
 
     defaults:
       run:
