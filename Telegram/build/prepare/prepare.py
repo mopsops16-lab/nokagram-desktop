@@ -220,7 +220,10 @@ def removeDir(folder):
         # Cache-restored trees often come back read-only, which makes plain
         # rmdir fail or leave the dir behind; then the exit guard below kills
         # the stage instantly with zero output. Strip read-only first.
+        # NOTE: attrib fails when the dir exists but is empty, so reset the
+        # errorlevel right after it; the rmdir guard below stays authoritative.
         return ('if exist ' + folder + ' attrib -R /S /D ' + folder + '\\* >nul 2>&1\n'
+                'ver > nul\n'
                 'if exist ' + folder + ' rmdir /Q /S ' + folder + '\n'
                 'if exist ' + folder + ' exit /b 1')
     return 'rm -rf ' + folder
