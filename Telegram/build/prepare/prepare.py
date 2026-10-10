@@ -783,11 +783,11 @@ win:
 
 depends:python/Scripts/activate.bat
     %THIRDPARTY_DIR%\\python\\Scripts\\activate.bat
-    meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=debug -Denable_tools=false -Denable_tests=false %DAV1D_ASM_DISABLE% -Db_vscrt=mtd builddir-debug
+    meson setup --cross-file %FILE% --prefix %LIBS_DIR:\\=/%/local --default-library=static --buildtype=debug -Denable_tools=false -Denable_tests=false %DAV1D_ASM_DISABLE% -Db_vscrt=mtd builddir-debug
     meson compile -C builddir-debug
     meson install -C builddir-debug
 release:
-    meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=release -Denable_tools=false -Denable_tests=false -Db_vscrt=mt builddir-release
+    meson setup --cross-file %FILE% --prefix %LIBS_DIR:\\=/%/local --default-library=static --buildtype=release -Denable_tools=false -Denable_tests=false -Db_vscrt=mt builddir-release
     meson compile -C builddir-release
     meson install -C builddir-release
 win:
@@ -843,11 +843,11 @@ win:
 
 depends:python/Scripts/activate.bat
     %THIRDPARTY_DIR%\\python\\Scripts\\activate.bat
-    meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=debug -Db_vscrt=mtd builddir-debug
+    meson setup --cross-file %FILE% --prefix %LIBS_DIR:\\=/%/local --default-library=static --buildtype=debug -Db_vscrt=mtd builddir-debug
     meson compile -C builddir-debug
     meson install -C builddir-debug
 release:
-    meson setup --cross-file %FILE% --prefix %LIBS_DIR%/local --default-library=static --buildtype=release -Db_vscrt=mt builddir-release
+    meson setup --cross-file %FILE% --prefix %LIBS_DIR:\\=/%/local --default-library=static --buildtype=release -Db_vscrt=mt builddir-release
     meson compile -C builddir-release
     meson install -C builddir-release
 win:
@@ -1205,9 +1205,9 @@ win:
     REM path derived from $PWD which native pkg-config.exe cannot resolve,
     REM so installed .pc files under local/ stay invisible without this.
     SET PKG_CONFIG_PATH=%LIBS_DIR%\\local\\lib\\pkgconfig
-    REM Meson writes prefix with backslashes; pkgconf fails to expand
-    REM them, so every .pc lookup silently misses. Normalize to slashes.
-    %THIRDPARTY_DIR%\\msys64\\usr\\bin\\sed.exe -i 's#\\\\#/#g' %LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc
+    REM NOTE: no sed normalization here anymore (a sed one-liner got mangled
+    REM crossing the cmd-to-msys argument boundary). Instead the meson stages
+    REM below pass a forward-slash prefix so the installed .pc files are clean.
     REM Belt and suspenders: copy every installed .pc into pkgconf's
     REM compiled-in default search dir, so lookup works no matter how
     REM (or whether) the environment path survives into msys bash.
