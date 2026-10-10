@@ -52,14 +52,10 @@ jobs:
 
     strategy:
       matrix:
-        arch: [x64_x86, x64, arm64]
+        # NokaGram: x64 only. x86 (x64_x86) and arm64 targets removed.
+        arch: [x64]
         qt: ["", qt6]
         generator: ["", "Ninja Multi-Config"]
-        exclude:
-          - arch: arm64
-            qt: ""
-          - arch: x64_x86
-            qt: qt6
 
     env:
       UPLOAD_ARTIFACT: "true"

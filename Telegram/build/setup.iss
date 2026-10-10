@@ -57,8 +57,7 @@ OutputBaseFilename={#MyOutputBaseFilename}
   #define ArchModulesFolder "x64"
   AppVerName={#MyAppName} {#MyAppVersion} 64bit
 #else
-  #define ArchModulesFolder "x86"
-  AppVerName={#MyAppName} {#MyAppVersion} 32bit
+  #error NokaGram builds win64/winarm only - x86 (32-bit) target removed
 #endif
 
 #define ModulesFolder "modules\" + ArchModulesFolder
