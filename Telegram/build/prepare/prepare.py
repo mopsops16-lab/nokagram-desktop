@@ -217,7 +217,12 @@ stages = []
 
 def removeDir(folder):
     if win:
-        return 'if exist ' + folder + ' rmdir /Q /S ' + folder + '\nif exist ' + folder + ' exit /b 1'
+        # Cache-restored trees often come back read-only, which makes plain
+        # rmdir fail or leave the dir behind; then the exit guard below kills
+        # the stage instantly with zero output. Strip read-only first.
+        return ('if exist ' + folder + ' attrib -R /S /D ' + folder + '\\* >nul 2>&1\n'
+                'if exist ' + folder + ' rmdir /Q /S ' + folder + '\n'
+                'if exist ' + folder + ' exit /b 1')
     return 'rm -rf ' + folder
 
 def setVar(key, multilineValue):
