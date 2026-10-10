@@ -1196,12 +1196,12 @@ win:
     REM Explicit Windows-style pkg-config path: the script prepends a POSIX
     REM path derived from $PWD which native pkg-config.exe cannot resolve,
     REM so installed .pc files under local/ stay invisible without this.
-    SET PKG_CONFIG_PATH=%LIBS_DIR%\local\lib\pkgconfig
+    SET PKG_CONFIG_PATH=%LIBS_DIR%\\local\\lib\\pkgconfig
     REM Belt and suspenders: copy every installed .pc into pkgconf's
     REM compiled-in default search dir, so lookup works no matter how
     REM (or whether) the environment path survives into msys bash.
-    if not exist "%THIRDPARTY_DIR%\msys64\ucrt64\lib\pkgconfig" mkdir "%THIRDPARTY_DIR%\msys64\ucrt64\lib\pkgconfig"
-    copy /Y "%LIBS_DIR%\local\lib\pkgconfig\*.pc" "%THIRDPARTY_DIR%\msys64\ucrt64\lib\pkgconfig"
+    if not exist "%THIRDPARTY_DIR%\\msys64\\ucrt64\\lib\\pkgconfig" mkdir "%THIRDPARTY_DIR%\\msys64\\ucrt64\\lib\\pkgconfig"
+    copy /Y "%LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc" "%THIRDPARTY_DIR%\\msys64\\ucrt64\\lib\\pkgconfig"
 depends:patches/build_ffmpeg_win.sh
     bash ../patches/build_ffmpeg_win.sh
 mac:
