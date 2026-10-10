@@ -1197,6 +1197,9 @@ win:
     REM path derived from $PWD which native pkg-config.exe cannot resolve,
     REM so installed .pc files under local/ stay invisible without this.
     SET PKG_CONFIG_PATH=%LIBS_DIR%\\local\\lib\\pkgconfig
+    REM Meson writes prefix with backslashes; pkgconf fails to expand
+    REM them, so every .pc lookup silently misses. Normalize to slashes.
+    %THIRDPARTY_DIR%\\msys64\\usr\\bin\\sed.exe -i 's#\\\\#/#g' %LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc
     REM Belt and suspenders: copy every installed .pc into pkgconf's
     REM compiled-in default search dir, so lookup works no matter how
     REM (or whether) the environment path survives into msys bash.
