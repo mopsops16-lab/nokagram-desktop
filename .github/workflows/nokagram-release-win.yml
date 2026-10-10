@@ -126,16 +126,21 @@ jobs:
         if: failure()
         shell: cmd
         run: |
-          echo === dav1d.pc present? ===
-          dir %TBUILD%\Libraries\win64\local\lib\pkgconfig\dav1d.pc
-          echo === cmd-side native probe ===
+          echo === ALL dav1d.pc on disk with their prefix lines ===
+          powershell -Command "Get-ChildItem '%TBUILD%\ThirdParty\msys64' -Recurse -Filter 'dav1d.pc' -ErrorAction SilentlyContinue | Select-Object FullName; Get-ChildItem '%TBUILD%\Libraries' -Recurse -Filter 'dav1d.pc' -ErrorAction SilentlyContinue | Select-Object FullName"
+          echo === our dav1d.pc full content ===
+          powershell -Command "Get-Content '%TBUILD%\Libraries\win64\local\lib\pkgconfig\dav1d.pc'"
+          echo === ucrt64 copy content if present ===
+          powershell -Command "if (Test-Path '%TBUILD%\ThirdParty\msys64\ucrt64\lib\pkgconfig\dav1d.pc') { Get-Content '%TBUILD%\ThirdParty\msys64\ucrt64\lib\pkgconfig\dav1d.pc' } else { echo NO_UCRT64_COPY }"
+          echo === PKG_CONFIG env on runner ===
+          set PKG_CONFIG 2>nul
+          set | findstr /I "PKG_CONFIG"
+          echo === cmd-side native probe with cflags ===
           set PKG_CONFIG_PATH=%TBUILD%\Libraries\win64\local\lib\pkgconfig
-          %TBUILD%\ThirdParty\msys64\ucrt64\bin\pkg-config.exe --modversion dav1d
+          %TBUILD%\ThirdParty\msys64\ucrt64\bin\pkg-config.exe --cflags --libs dav1d
           echo CMD_EXIT=%ERRORLEVEL%
-          echo === bash-side probe ===
-          %TBUILD%\ThirdParty\msys64\usr\bin\bash.exe -c "echo BASH_SEES=[$PKG_CONFIG_PATH]; which -a pkg-config; pkg-config --modversion dav1d; echo BASH_EXIT=$?"
           echo === ffmpeg config.log tail ===
-          powershell -Command "Get-Content %TBUILD%\Libraries\win64\ffmpeg\ffbuild\config.log -Tail 60"
+          powershell -Command "Get-Content %TBUILD%\Libraries\win64\ffmpeg\ffbuild\config.log -Tail 40"
           exit /b 1
 
       - name: Free up some disk space.
