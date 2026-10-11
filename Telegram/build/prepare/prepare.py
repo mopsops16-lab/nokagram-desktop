@@ -1212,7 +1212,7 @@ win:
     REM compiled-in default search dir, so lookup works no matter how
     REM (or whether) the environment path survives into msys bash.
     REM NOTE: ffmpeg configure runs under MSYS2 bash where PATH puts
-    REM msys64\usr\bin FIRST, so the pkg-config that actually runs is the
+    REM msys64/usr/bin FIRST, so the pkg-config that actually runs is the
     REM MSYS2 one - its compiled-in defaults are usr/lib/pkgconfig and
     REM usr/share/pkgconfig, NOT ucrt64/lib/pkgconfig. Copy there too,
     REM otherwise dav1d/opus/vpx stay invisible and configure dies with
