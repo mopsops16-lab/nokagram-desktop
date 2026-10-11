@@ -1211,8 +1211,18 @@ win:
     REM Belt and suspenders: copy every installed .pc into pkgconf's
     REM compiled-in default search dir, so lookup works no matter how
     REM (or whether) the environment path survives into msys bash.
+    REM NOTE: ffmpeg configure runs under MSYS2 bash where PATH puts
+    REM msys64\usr\bin FIRST, so the pkg-config that actually runs is the
+    REM MSYS2 one - its compiled-in defaults are usr/lib/pkgconfig and
+    REM usr/share/pkgconfig, NOT ucrt64/lib/pkgconfig. Copy there too,
+    REM otherwise dav1d/opus/vpx stay invisible and configure dies with
+    REM "libdav1d not found" even though the .pc files exist on disk.
     if not exist "%THIRDPARTY_DIR%\\msys64\\ucrt64\\lib\\pkgconfig" mkdir "%THIRDPARTY_DIR%\\msys64\\ucrt64\\lib\\pkgconfig"
     copy /Y "%LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc" "%THIRDPARTY_DIR%\\msys64\\ucrt64\\lib\\pkgconfig"
+    if not exist "%THIRDPARTY_DIR%\\msys64\\usr\\lib\\pkgconfig" mkdir "%THIRDPARTY_DIR%\\msys64\\usr\\lib\\pkgconfig"
+    copy /Y "%LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc" "%THIRDPARTY_DIR%\\msys64\\usr\\lib\\pkgconfig"
+    if not exist "%THIRDPARTY_DIR%\\msys64\\usr\\share\\pkgconfig" mkdir "%THIRDPARTY_DIR%\\msys64\\usr\\share\\pkgconfig"
+    copy /Y "%LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc" "%THIRDPARTY_DIR%\\msys64\\usr\\share\\pkgconfig"
 depends:patches/build_ffmpeg_win.sh
     bash ../patches/build_ffmpeg_win.sh
 mac:
