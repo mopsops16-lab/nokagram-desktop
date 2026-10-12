@@ -1193,7 +1193,12 @@ depends:patches/ffmpeg.patch
     git apply ../patches/ffmpeg.patch
 
     if not "%VCToolsInstallDir%"=="" set "PATH=%VCToolsInstallDir%\\bin\\Hostx64\\x64;%PATH%"
-    SET PATH=%THIRDPARTY_DIR%\\msys64\\usr\\bin;%PATH%
+    REM ucrt64/bin FIRST so bash resolves pkg-config to ucrt64's pkgconf:
+    REM ffmpeg configure ignores $PKG_CONFIG and uses PATH lookup, and the
+    REM msys/Git pkg-config binaries produced ghost -I/-L last time while
+    REM ucrt64's pkgconf plus our copied dav1d.pc probe correct flags.
+    REM Missing tools fall through to usr/bin; only pkg-config shadows.
+    SET PATH=%THIRDPARTY_DIR%\\msys64\\ucrt64\\bin;%THIRDPARTY_DIR%\\msys64\\usr\\bin;%PATH%
     SET CHERE_INVOKING=enabled_from_arguments
     SET MSYS2_PATH_TYPE=inherit
 
@@ -1234,6 +1239,9 @@ win:
     copy /Y "%LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc" "%THIRDPARTY_DIR%\\msys64\\usr\\lib\\pkgconfig"
     if not exist "%THIRDPARTY_DIR%\\msys64\\usr\\share\\pkgconfig" mkdir "%THIRDPARTY_DIR%\\msys64\\usr\\share\\pkgconfig"
     copy /Y "%LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc" "%THIRDPARTY_DIR%\\msys64\\usr\\share\\pkgconfig"
+    REM Bash-side probe: shows EXACTLY which pkg-config configure will run
+    REM and what flags it returns (inherits this same environment).
+    bash -c "which -a pkg-config; pkg-config --variable pc_path pkg-config; pkg-config --cflags --libs dav1d; echo BASH_PROBE_EXIT=$?"
 depends:patches/build_ffmpeg_win.sh
     bash ../patches/build_ffmpeg_win.sh
 mac:
