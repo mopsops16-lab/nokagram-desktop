@@ -1204,7 +1204,18 @@ win:
     REM Explicit Windows-style pkg-config path: the script prepends a POSIX
     REM path derived from $PWD which native pkg-config.exe cannot resolve,
     REM so installed .pc files under local/ stay invisible without this.
-    SET PKG_CONFIG_PATH=%LIBS_DIR%\\local\\lib\\pkgconfig
+    REM Forward-slash normalization via cmd substitution (two steps so no
+    REM backslash-u sequence ever hits the Python parser): backslash form
+    REM breaks MSYS2 bash argument parsing AND pkgconf's own path handling,
+    REM and previously produced ghost -I/-L pointing into msys64/ucrt64
+    REM instead of local/ ("libdav1d not found" with dav1d.pc on disk).
+    REM Force ffmpeg configure onto ucrt64's pkgconf explicitly: whatever
+    REM pkg-config bash resolved by PATH gave wrong flags last time.
+    SET "PKG_CONFIG_PATH_MSYS=%LIBS_DIR%"
+    SET "PKG_CONFIG_PATH_MSYS=%PKG_CONFIG_PATH_MSYS:\=/%/local/lib/pkgconfig"
+    SET PKG_CONFIG_PATH=%PKG_CONFIG_PATH_MSYS%
+    SET "PKG_CONFIG_TMP=%THIRDPARTY_DIR%"
+    SET "PKG_CONFIG=%PKG_CONFIG_TMP:\=/%/msys64/ucrt64/bin/pkg-config.exe"
     REM NOTE: no sed normalization here anymore (a sed one-liner got mangled
     REM crossing the cmd-to-msys argument boundary). Instead the meson stages
     REM below pass a forward-slash prefix so the installed .pc files are clean.
