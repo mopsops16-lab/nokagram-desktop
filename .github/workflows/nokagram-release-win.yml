@@ -127,7 +127,9 @@ jobs:
         shell: cmd
         run: |
           echo === ALL dav1d.pc on disk with their prefix lines ===
-          powershell -Command "Get-ChildItem '%TBUILD%\ThirdParty\msys64' -Recurse -Filter 'dav1d.pc' -ErrorAction SilentlyContinue | Select-Object FullName; Get-ChildItem '%TBUILD%\Libraries' -Recurse -Filter 'dav1d.pc' -ErrorAction SilentlyContinue | Select-Object FullName"
+          powershell -Command "Get-ChildItem '%TBUILD%\ThirdParty\msys64' -Recurse -Filter 'dav1d.pc' -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName; (Get-Content $_.FullName | Select-String 'prefix=' | Select-Object -First 1) }"
+          echo === pacman ucrt64 dav1d installed? ===
+          bash -c "pacman -Q mingw-w64-ucrt-x86_64-dav1d"
           echo === our dav1d.pc full content ===
           powershell -Command "Get-Content '%TBUILD%\Libraries\win64\local\lib\pkgconfig\dav1d.pc'"
           echo === ucrt64 copy content if present ===
