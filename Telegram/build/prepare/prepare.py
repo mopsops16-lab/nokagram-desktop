@@ -1241,7 +1241,10 @@ win:
     copy /Y "%LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc" "%THIRDPARTY_DIR%\\msys64\\usr\\share\\pkgconfig"
     REM Bash-side probe: shows EXACTLY which pkg-config configure will run
     REM and what flags it returns (inherits this same environment).
-    bash -c "which -a pkg-config; pkg-config --variable pc_path pkg-config; pkg-config --cflags --libs dav1d; echo BASH_PROBE_EXIT=$?"
+    REM NOTE: no dollar-signs here, winFailOnEach rejects them as bad commands.
+    bash -c "which -a pkg-config"
+    bash -c "pkg-config --variable pc_path pkg-config"
+    bash -c "pkg-config --cflags --libs dav1d"
 depends:patches/build_ffmpeg_win.sh
     bash ../patches/build_ffmpeg_win.sh
 mac:
