@@ -1247,6 +1247,10 @@ win:
     bash -c "pkg-config --path dav1d"
     bash -c "pkg-config --print-variables dav1d"
     bash -c "pkg-config --cflags --libs dav1d"
+    bash -c "pkg-config --modversion dav1d; echo MODVERSION_EXIT"
+    bash -c "pkg-config --exists dav1d; echo EXIT_NOCONSTRAINT"
+    bash -c "pkg-config --exists 'dav1d >= 0.5.0'; echo EXIT_CONSTRAINT"
+    bash -c "pkg-config --debug --exists 'dav1d >= 0.5.0' 2>&1 | tail -25"
 depends:patches/build_ffmpeg_win.sh
     bash ../patches/build_ffmpeg_win.sh
 mac:
