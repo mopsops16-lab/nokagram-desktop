@@ -1244,6 +1244,8 @@ win:
     REM NOTE: no dollar-signs here, winFailOnEach rejects them as bad commands.
     bash -c "which -a pkg-config"
     bash -c "pkg-config --variable pc_path pkg-config"
+    bash -c "pkg-config --path dav1d"
+    bash -c "pkg-config --print-variables dav1d"
     bash -c "pkg-config --cflags --libs dav1d"
 depends:patches/build_ffmpeg_win.sh
     bash ../patches/build_ffmpeg_win.sh
