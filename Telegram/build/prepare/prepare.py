@@ -133,6 +133,20 @@ ignoreInCacheForThirdParty = [
     'X8664',
 ]
 
+if (win32 or win64 or winarm):
+    # ffmpeg's build_ffmpeg_win.sh starts with
+    #   export PKG_CONFIG_PATH="$FullExecPath/../local/lib/pkgconfig:$PKG_CONFIG_PATH"
+    # where FullExecPath is the prepare.py cwd, so it prepends a path that does
+    # not exist and then relies on whatever PKG_CONFIG_PATH it inherited. Setting
+    # it with `SET` inside a stage does not help: winFailOnEach runs each line as
+    # its own `cmd /c`, so the variable is gone by the time bash runs. Export it
+    # from the Python process instead - every child (cmd, bash, the compiler) then
+    # inherits it, and the upstream export keeps our real path in the list.
+    _local_pkgconfig = os.path.join(libsDir, 'local', 'lib', 'pkgconfig').replace('\\', '/')
+    _inherited = os.environ.get('PKG_CONFIG_PATH', '')
+    os.environ['PKG_CONFIG_PATH'] = _local_pkgconfig + ((':' + _inherited) if _inherited else '')
+    environment['PKG_CONFIG_PATH'] = os.environ['PKG_CONFIG_PATH']
+
 environmentKeyString = ''
 envForThirdPartyKeyString = ''
 for key in environment:
