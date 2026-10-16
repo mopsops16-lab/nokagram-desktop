@@ -146,6 +146,15 @@ if (win32 or win64 or winarm):
     _inherited = os.environ.get('PKG_CONFIG_PATH', '')
     os.environ['PKG_CONFIG_PATH'] = _local_pkgconfig + ((':' + _inherited) if _inherited else '')
     environment['PKG_CONFIG_PATH'] = os.environ['PKG_CONFIG_PATH']
+    # pkgconf (MSYS2 ucrt64) enables --define-prefix by default on Windows:
+    # it rewrites the prefix= of every .pc to the directory the .pc was
+    # found in, so the copies below in msys64/{ucrt64,usr}/lib/pkgconfig
+    # report msys64/ucrt64 as their prefix and emit a ghost
+    # -I.../ucrt64/bin/../include. Our real headers live in
+    # Libraries/win64/local/include, so disable the relocation and let the
+    # prefix= recorded by meson (the real local/ path) be used verbatim.
+    os.environ['PKG_CONFIG_DONT_DEFINE_PREFIX'] = '1'
+    environment['PKG_CONFIG_DONT_DEFINE_PREFIX'] = '1'
 
 environmentKeyString = ''
 envForThirdPartyKeyString = ''
