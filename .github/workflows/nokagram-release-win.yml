@@ -126,23 +126,25 @@ jobs:
         if: failure()
         shell: cmd
         run: |
-          echo === ALL dav1d.pc on disk with their prefix lines ===
-          powershell -Command "Get-ChildItem '%TBUILD%\ThirdParty\msys64' -Recurse -Filter 'dav1d.pc' -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName; (Get-Content $_.FullName | Select-String 'prefix=' | Select-Object -First 1) }"
-          echo === pacman ucrt64 dav1d installed? ===
-          bash -c "pacman -Q mingw-w64-ucrt-x86_64-dav1d"
-          echo === our dav1d.pc full content ===
-          powershell -Command "Get-Content '%TBUILD%\Libraries\win64\local\lib\pkgconfig\dav1d.pc'"
-          echo === ucrt64 copy content if present ===
-          powershell -Command "if (Test-Path '%TBUILD%\ThirdParty\msys64\ucrt64\lib\pkgconfig\dav1d.pc') { Get-Content '%TBUILD%\ThirdParty\msys64\ucrt64\lib\pkgconfig\dav1d.pc' } else { echo NO_UCRT64_COPY }"
+          echo === ffnvcodec.pc full content ===
+          type %TBUILD%\Libraries\win64\local\lib\pkgconfig\ffnvcodec.pc
+          echo === ffnvcodec.pc copies under msys64 ===
+          powershell -Command "Get-ChildItem '%TBUILD%\ThirdParty\msys64' -Recurse -Filter 'ffnvcodec.pc' -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }"
           echo === PKG_CONFIG env on runner ===
-          set PKG_CONFIG 2>nul
           set | findstr /I "PKG_CONFIG"
-          echo === cmd-side native probe with cflags ===
+          echo === set env exactly like ffmpeg stage ===
           set PKG_CONFIG_PATH=%TBUILD%\Libraries\win64\local\lib\pkgconfig
-          %TBUILD%\ThirdParty\msys64\ucrt64\bin\pkg-config.exe --cflags --libs dav1d
-          echo CMD_EXIT=%ERRORLEVEL%
-          echo === ffmpeg config.log tail ===
-          powershell -Command "Get-Content %TBUILD%\Libraries\win64\ffmpeg\ffbuild\config.log -Tail 40"
+          echo === native ucrt64 pkg-config: ffnvcodec ===
+          %TBUILD%\ThirdParty\msys64\ucrt64\bin\pkg-config.exe --modversion ffnvcodec
+          echo MOD_EXIT=%ERRORLEVEL%
+          %TBUILD%\ThirdParty\msys64\ucrt64\bin\pkg-config.exe --exists "ffnvcodec >= 12.1.14.0"
+          echo EXISTS_EXIT=%ERRORLEVEL%
+          %TBUILD%\ThirdParty\msys64\ucrt64\bin\pkg-config.exe --cflags ffnvcodec
+          echo CFLAGS_EXIT=%ERRORLEVEL%
+          echo === msys2 bash pkg-config (what configure actually resolves) ===
+          bash -c "which -a pkg-config; echo ---; pkg-config --modversion ffnvcodec; echo MSYS_MOD_EXIT=$?; pkg-config --exists 'ffnvcodec >= 12.1.14.0'; echo MSYS_EXISTS_EXIT=$?; pkg-config --cflags ffnvcodec"
+          echo === config.log ffnvcodec / nvEncode / dynlink lines ===
+          powershell -Command "Select-String -Path %TBUILD%\Libraries\win64\ffmpeg\ffbuild\config.log -Pattern 'ffnvcodec','nvEncode','NV_ENC','dynlink','check_pkg_config','test_pkg_config' | ForEach-Object { $_.Line }"
           exit /b 1
 
       - name: Free up some disk space.
