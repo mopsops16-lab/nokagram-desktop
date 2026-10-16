@@ -146,15 +146,6 @@ if (win32 or win64 or winarm):
     _inherited = os.environ.get('PKG_CONFIG_PATH', '')
     os.environ['PKG_CONFIG_PATH'] = _local_pkgconfig + ((':' + _inherited) if _inherited else '')
     environment['PKG_CONFIG_PATH'] = os.environ['PKG_CONFIG_PATH']
-    # pkgconf (MSYS2 ucrt64) enables --define-prefix by default on Windows:
-    # it rewrites the prefix= of every .pc to the directory the .pc was
-    # found in, so the copies below in msys64/{ucrt64,usr}/lib/pkgconfig
-    # report msys64/ucrt64 as their prefix and emit a ghost
-    # -I.../ucrt64/bin/../include. Our real headers live in
-    # Libraries/win64/local/include, so disable the relocation and let the
-    # prefix= recorded by meson (the real local/ path) be used verbatim.
-    os.environ['PKG_CONFIG_DONT_DEFINE_PREFIX'] = '1'
-    environment['PKG_CONFIG_DONT_DEFINE_PREFIX'] = '1'
 
 environmentKeyString = ''
 envForThirdPartyKeyString = ''
@@ -1247,6 +1238,14 @@ win:
     REM NOTE: no sed normalization here anymore (a sed one-liner got mangled
     REM crossing the cmd-to-msys argument boundary). Instead the meson stages
     REM below pass a forward-slash prefix so the installed .pc files are clean.
+    REM Install nv-codec-headers into local HERE, before the copy below, so that
+    REM ffnvcodec.pc already exists when we copy local\\*.pc into pkgconf's
+    REM default search dirs. build_ffmpeg_win.sh installs it too, but only AFTER
+    REM this copy: configure ends up searching just those default dirs, so it
+    REM finds the already-copied dav1d/opus/vpx while ffnvcodec (created later,
+    REM never copied) stays invisible -> "cuvid ... dependencies ... ffnvcodec".
+    REM Idempotent: the later install in build_ffmpeg_win.sh is a no-op overwrite.
+    bash -c "cd '%LIBS_DIR:\\=/%/nv-codec-headers' && make PREFIX=../local install"
     REM Belt and suspenders: copy every installed .pc into pkgconf's
     REM compiled-in default search dir, so lookup works no matter how
     REM (or whether) the environment path survives into msys bash.
