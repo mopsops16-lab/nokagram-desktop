@@ -120,7 +120,9 @@ jobs:
 
       - name: Libraries.
         run: |
-          %TBUILD%\%REPO_NAME%\Telegram\build\prepare\win.bat skip-release
+          REM no skip-release: Release link needs breakpad/tg_angle/qt release configs.
+          REM silent: auto-rebuild stale cached stages instead of interactive prompt.
+          %TBUILD%\%REPO_NAME%\Telegram\build\prepare\win.bat silent
 
       - name: Diagnose prepare failure.
         if: failure()
