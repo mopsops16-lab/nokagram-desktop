@@ -8,9 +8,12 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "updater.h"
 
 #include "base/platform/win/base_windows_safe_library.h"
-#include "core/branding.h"
-#include <QtCore/QString>
 #include <string>
+
+// Branding without Qt: Updater is a standalone exe and must not pull
+// QtCore (the shared const_string.h drags QString in).
+static const WCHAR *kUpdaterAppName = L"NokaGram Desktop";
+static const WCHAR *kUpdaterCompanyName = L"NokaGram";
 
 bool _debug = false;
 
@@ -313,8 +316,8 @@ void updateRegistry() {
 								GetLocalTime(&stLocalTime);
 								RegSetValueEx(rkey, L"DisplayVersion", 0, REG_SZ, (const BYTE*)versionStr, ((versionLen / 2) + 1) * sizeof(WCHAR));
 								{
-									auto appName = QString::fromUtf8(Branding::AppName.utf8());
-									auto companyName = QString::fromUtf8(Branding::CompanyName.utf8());
+									auto appName = std::wstring(kUpdaterAppName);
+									auto companyName = std::wstring(kUpdaterCompanyName);
 									wcscpy(nameStr, appName.toStdWString().c_str());
 									RegSetValueEx(rkey, L"DisplayName", 0, REG_SZ, (const BYTE*)nameStr, (wcslen(nameStr) + 1) * sizeof(WCHAR));
 									wcscpy(publisherStr, companyName.toStdWString().c_str());
@@ -502,7 +505,7 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prevInstance, LPWSTR cmdPara
 
 // folder in APPDATA, if current path is unavailable for writing
 static const WCHAR *_programName = []() -> const WCHAR* {
-	static std::wstring name = QString::fromUtf8(Branding::AppName.utf8()).toStdWString();
+	static std::wstring name = kUpdaterAppName;
 	return name.c_str();
 }();
 static const WCHAR *_exeName = L"Updater.exe";
