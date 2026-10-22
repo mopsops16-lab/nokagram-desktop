@@ -2542,6 +2542,8 @@ if (NOT DESKTOP_APP_DISABLE_AUTOUPDATE AND NOT build_macstore AND NOT build_wins
         RUNTIME_OUTPUT_DIRECTORY ${output_folder}
     )
 
+    target_include_directories(Updater PRIVATE ${src_loc})
+
     if (WIN32)
         get_filename_component(lib_base_loc lib_base REALPATH)
         nice_target_sources(Updater ${lib_base_loc}
