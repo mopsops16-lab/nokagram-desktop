@@ -1260,7 +1260,7 @@ win:
     if not exist "%THIRDPARTY_DIR%\\msys64\\usr\\lib\\pkgconfig" mkdir "%THIRDPARTY_DIR%\\msys64\\usr\\lib\\pkgconfig"
     copy /Y "%LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc" "%THIRDPARTY_DIR%\\msys64\\usr\\lib\\pkgconfig"
     if not exist "%THIRDPARTY_DIR%\\msys64\\usr\\share\\pkgconfig" mkdir "%THIRDPARTY_DIR%\\msys64\\usr\\share\\pkgconfig"
-    copy /Y "%LIBS_DIR%\local\lib\pkgconfig\*.pc" "%THIRDPARTY_DIR%\msys64\usr\share\pkgconfig"
+    copy /Y "%LIBS_DIR%\\local\\lib\\pkgconfig\\*.pc" "%THIRDPARTY_DIR%\\msys64\\usr\\share\\pkgconfig"
     REM pkgconf's --define-prefix (on by default in the Windows build) rewrites
     REM every package's prefix to pkgconf's own install root (msys64/<prefix>),
     REM so the -I/-L it prints point under msys64 instead of local/. We cannot
@@ -1269,10 +1269,10 @@ win:
     REM so it ignores our real local/ path and falls back to these default-dir
     REM copies. Mirror the real headers and static libs under the same msys
     REM root so the rewritten -I/-L paths resolve to the actual files.
-    if exist "%LIBS_DIR%\local\include" xcopy /E /I /Y "%LIBS_DIR%\local\include" "%THIRDPARTY_DIR%\msys64\ucrt64\include" >nul
-    if exist "%LIBS_DIR%\local\lib" xcopy /E /I /Y "%LIBS_DIR%\local\lib" "%THIRDPARTY_DIR%\msys64\ucrt64\lib" >nul
-    if exist "%LIBS_DIR%\local\include" xcopy /E /I /Y "%LIBS_DIR%\local\include" "%THIRDPARTY_DIR%\msys64\usr\include" >nul
-    if exist "%LIBS_DIR%\local\lib" xcopy /E /I /Y "%LIBS_DIR%\local\lib" "%THIRDPARTY_DIR%\msys64\usr\lib" >nul
+    if exist "%LIBS_DIR%\\local\\include" xcopy /E /I /Y "%LIBS_DIR%\\local\\include" "%THIRDPARTY_DIR%\\msys64\\ucrt64\\include" >nul
+    if exist "%LIBS_DIR%\\local\\lib" xcopy /E /I /Y "%LIBS_DIR%\\local\\lib" "%THIRDPARTY_DIR%\\msys64\\ucrt64\\lib" >nul
+    if exist "%LIBS_DIR%\\local\\include" xcopy /E /I /Y "%LIBS_DIR%\\local\\include" "%THIRDPARTY_DIR%\\msys64\\usr\\include" >nul
+    if exist "%LIBS_DIR%\\local\\lib" xcopy /E /I /Y "%LIBS_DIR%\\local\\lib" "%THIRDPARTY_DIR%\\msys64\\usr\\lib" >nul
     REM Bash-side probe: shows EXACTLY which pkg-config configure will run
     REM and what flags it returns (inherits this same environment).
     REM NOTE: no dollar-signs here, winFailOnEach rejects them as bad commands.
